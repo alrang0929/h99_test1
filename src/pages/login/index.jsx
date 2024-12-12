@@ -11,13 +11,12 @@ import { pageRoutes } from '@/apiRoutes';
 import { EMAIL_PATTERN } from '@/constants';
 import { auth } from '@/firebase';
 import { Layout, authStatusType } from '@/pages/common/components/Layout';
-import { setIsLogin, setUser } from '@/store/auth/authSlice';
-import { useAppDispatch } from '@/store/hooks';
+import { useAuthStore } from '@/store/auth/authStore';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-
+  const {setIsLogin, setUser} = useAuthStore();
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -43,6 +42,7 @@ export const LoginPage = () => {
   const handleClickLoginButton = async (e) => {
     e.preventDefault();
     if (validateForm()) {
+      console.log('Form is valid');
       try {
         const userCredential = await signInWithEmailAndPassword(
           auth,
@@ -51,20 +51,18 @@ export const LoginPage = () => {
         );
         const user = userCredential.user;
         const token = await user.getIdToken();
-
+        
+        console.log(user);
         Cookies.set('accessToken', token, { expires: 7 });
-
-        dispatch(setIsLogin(true));
+        setIsLogin(true);
         if (user) {
-          dispatch(
-            setUser({
-              uid: user.uid,
-              email: user.email ?? '',
-              displayName: user.displayName ?? '',
-            })
-          );
+          setUser({
+            uid: user.uid,
+            email: user.email ?? '',
+            displayName: user.displayName ?? '',
+          })
         }
-
+        console.log(user);
         navigate(pageRoutes.main);
       } catch (error) {
         console.error(
@@ -72,7 +70,7 @@ export const LoginPage = () => {
           error
         );
         setErrors({
-          form: '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.',
+          form: 'asdasd로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.',
         });
       }
     }
