@@ -1,16 +1,13 @@
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './auth/authSlice';
-import cartReducer from './cart/cartSlice';
-import filterReducer from './filter/filterSlice';
-import productsReducer from './product/productsSlice';
-import purchaseSlice from './purchase/purchaseSlice';
+import { useAuthStore } from './auth/authStore';
+import { useCartStore } from './cart/cartStore';
+import { useFilterStore } from './filter/filterStore';
+import { useProductsStore } from './product/productsStore';
+import { usePurchaseStore } from './purchase/purchaseStore';
 
-export const store = configureStore({
-  reducer: {
-    auth: authReducer,
-    cart: cartReducer,
-    filter: filterReducer,
-    products: productsReducer,
-    purchase: purchaseSlice,
-  },
+export const store = () => ({
+  auth: useAuthStore(),
+  cart: useCartStore(),
+  filter: useFilterStore(),
+  products: useProductsStore(),
+  purchase: usePurchaseStore(),
 });
