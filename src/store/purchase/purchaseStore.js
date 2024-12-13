@@ -5,10 +5,12 @@ export const usePurchaseStore = create((set) => ({
   isLoading: false,
   error: null,
 
-  // 액션
+  // 상태 업데이트 함수
+  setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
+  resetState: () => set({ isLoading: false, error: null }),
+
   purchaseStart: () => set({ isLoading: true, error: null }),
-
   purchaseSuccess: () => set({ isLoading: false, error: null }),
-
   purchaseFailure: (error) => set({ isLoading: false, error }),
 }));

@@ -11,8 +11,8 @@ import { FirebaseIndexErrorModal } from '@/pages/error/components/FirebaseIndexE
 import { selectIsLogin, selectUser } from '@/store/auth/authSelectors';
 import { addCartItem } from '@/store/cart/cartSlice';
 import { selectFilter } from '@/store/filter/filterSelectors';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { loadProducts } from '@/store/product/productsActions';
+// import { useAppDispatch, useAppSelector } from '@/store/hooks';
+// import { loadProducts } from '@/store/product/productsActions';
 import {
   selectHasNextPage,
   selectIsLoading,

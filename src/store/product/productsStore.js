@@ -8,10 +8,16 @@ export const useProductsStore = create((set, get) => ({
   error: null,
   totalCount: 0,
 
-  // 액션
-  loadProductsPending: () => set({ isLoading: true }),
+  // 상태 업데이트 액션
+  setItems: (items) => set({ items }),
+  setHasNextPage: (hasNextPage) => set({ hasNextPage }),
+  setIsLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
+  setTotalCount: (totalCount) => set({ totalCount }),
 
-  loadProductsFulfilled: ({ products, hasNextPage, totalCount, isInitial }) => {
+  // load
+  loadProductsPending: () => set({ isLoading: true }),
+  loadProductsFulfilled: (products, hasNextPage, totalCount, isInitial) => {
     const currentItems = get().items;
     set({
       items: isInitial ? products : [...currentItems, ...products],
@@ -21,23 +27,26 @@ export const useProductsStore = create((set, get) => ({
       error: null,
     });
   },
-
-  loadProductsRejected: (error) => set({ isLoading: false, error }),
-
-  addProductPending: () => set({ isLoading: true }),
-
-  addProductFulfilled: (product) => {
-    const currentItems = get().items;
+  loadProductsRejected: (error) =>
     set({
-      items: [product, ...currentItems],
+      isLoading: false,
+      error,
+    }),
+
+  // addProduct
+  addProductPending: () => set({ isLoading: true }),
+  addProductFulfilled: (newProduct) => {
+    const items = get().items; // 수정된 키
+    set({
+      items: [newProduct, ...items],
       totalCount: get().totalCount + 1,
       isLoading: false,
       error: null,
     });
   },
-
-  addProductRejected: (error) => set({
-    isLoading: false,
-    error: error || '상품 등록에 실패하였습니다.',
-  }),
+  addProductRejected: (error) =>
+    set({
+      isLoading: false,
+      error: error || '상품 등록에 실패하였습니다.',
+    }),
 }));

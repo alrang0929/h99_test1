@@ -19,18 +19,19 @@ import { ALL_CATEGORY_ID, categories } from '@/constants';
 import React, { useState } from 'react';
 
 import { createNewProduct, initialProductState } from '@/helpers/product';
-import { useAppDispatch } from '@/store/hooks';
-import { addProduct } from '@/store/product/productsActions';
+// import { useAppDispatch } from '@/store/hooks';
+// import { addProduct } from '@/store/product/productsActions';
 import { uploadImage } from '@/utils/imageUpload';
+import { useAddProduct } from '@/store/product/productsActions';
 
 export const ProductRegistrationModal = ({
   isOpen,
   onClose,
   onProductAdded,
 }) => {
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
   const [product, setProduct] = useState(initialProductState);
-
+  const { mutate: addProduct } = useAddProduct();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProduct((prev) => ({ ...prev, [name]: value }));
@@ -56,7 +57,7 @@ export const ProductRegistrationModal = ({
       }
 
       const newProduct = createNewProduct(product, imageUrl);
-      await dispatch(addProduct(newProduct));
+      await addProduct(newProduct);
       onClose();
       onProductAdded();
     } catch (error) {

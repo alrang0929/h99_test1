@@ -10,12 +10,13 @@ import {
 import { ShoppingCart } from 'lucide-react';
 import React from 'react';
 
-import { selectCart } from '@/store/cart/cartSelectors';
-import { useAppSelector } from '@/store/hooks';
+// import { selectCart } from '@/store/cart/cartSelectors';
+// import { useAppSelector } from '@/store/hooks';
 import { formatPrice } from '@/utils/formatter';
+import { useCartStore } from '@/store/cart/cartStore';
 
 export const ItemList = () => {
-  const cart = useAppSelector(selectCart);
+  const {cart} = useCartStore();
 
   return (
     <Card className="mt-6">

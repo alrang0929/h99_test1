@@ -8,6 +8,7 @@ import {
   resetFilter,
 } from './filterActions';
 
+
 const initialState = {
   minPrice: 0,
   maxPrice: 0,

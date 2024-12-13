@@ -1,5 +1,11 @@
-export const selectMinPrice = (state) => state.filter.minPrice;
-export const selectMaxPrice = (state) => state.filter.maxPrice;
-export const selectTitle = (state) => state.filter.title;
-export const selectCategoryId = (state) => state.filter.categoryId;
-export const selectFilter = (state) => state.filter;
+export const selectMinPrice = () => useFilterStore((state) => state.minPrice);
+export const selectMaxPrice = () => useFilterStore((state) => state.maxPrice);
+export const selectTitle = () => useFilterStore((state) => state.title);
+export const selectCategoryId = () => useFilterStore((state) => state.categoryId);
+export const selectFilter = () => useFilterStore((state) => ({
+  minPrice: state.minPrice,
+  maxPrice: state.maxPrice,
+  title: state.title,
+  categoryId: state.categoryId,
+}));
+``

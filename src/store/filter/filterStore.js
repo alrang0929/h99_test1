@@ -8,15 +8,17 @@ export const useFilterStore = create((set) => ({
   title: '',
   categoryId: ALL_CATEGORY_ID,
 
-  // 액션
+  // 상태 업데이트 함수
+  selectFilter:()=>set({}),
   setMinPrice: (minPrice) => set({ minPrice }),
   setMaxPrice: (maxPrice) => set({ maxPrice }),
   setTitle: (title) => set({ title }),
   setCategoryId: (categoryId) => set({ categoryId }),
-  resetFilter: () => set({
-    minPrice: 0,
-    maxPrice: 0,
-    title: '',
-    categoryId: ALL_CATEGORY_ID,
-  }),
+  resetFilter: () =>
+    set({
+      minPrice: 0,
+      maxPrice: 0,
+      title: '',
+      categoryId: ALL_CATEGORY_ID,
+    }),
 }));
