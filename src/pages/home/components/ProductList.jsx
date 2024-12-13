@@ -2,17 +2,14 @@ import { Button } from '@/components/ui/button';
 import { ChevronDown, Plus } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { useStore } from 'zustand';
 import { pageRoutes } from '@/apiRoutes';
 import { PRODUCT_PAGE_SIZE } from '@/constants';
 import { extractIndexLink, isFirebaseIndexError } from '@/helpers/error';
 import { useModal } from '@/hooks/useModal';
 import { FirebaseIndexErrorModal } from '@/pages/error/components/FirebaseIndexErrorModal';
 import { selectIsLogin, selectUser } from '@/store/auth/authSelectors';
-import { addCartItem } from '@/store/cart/cartSlice';
-import { selectFilter } from '@/store/filter/filterSelectors';
-// import { useAppDispatch, useAppSelector } from '@/store/hooks';
-// import { loadProducts } from '@/store/product/productsActions';
+// import { addCartItem } from '@/store/cart/cartSlice';
 import {
   selectHasNextPage,
   selectIsLoading,
@@ -24,34 +21,51 @@ import { ProductCardSkeleton } from '../skeletons/ProductCardSkeleton';
 import { EmptyProduct } from './EmptyProduct';
 import { ProductCard } from './ProductCard';
 import { ProductRegistrationModal } from './ProductRegistrationModal';
-
+import { useProductsStore } from '@/store/product/productsStore';
+import { useAuthStore } from '@/store/auth/authStore';
+import { useFilterStore } from '@/store/filter/filterStore';
+import { useMemo } from 'react';
+import { useCartStore } from '../../../store/cart/cartStore';
+import { useLoadProducts } from '../../../store/product/productsActions';
 export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
+  const { addCartItem } = useCartStore();
+  const { user, isLogin } = useAuthStore();
+  const {totalCount, loadProductsFulfilled} = useProductsStore();
+
+  // 초기값 상태관리 변수
   const { isOpen, openModal, closeModal } = useModal();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [isIndexErrorModalOpen, setIsIndexErrorModalOpen] = useState(false);
   const [indexLink, setIndexLink] = useState(null);
 
-  const products = useAppSelector(selectProducts);
-  const hasNextPage = useAppSelector(selectHasNextPage);
-  const isLoading = useAppSelector(selectIsLoading);
-  const filter = useAppSelector(selectFilter);
-  const user = useAppSelector(selectUser);
-  const isLogin = useAppSelector(selectIsLogin);
-  const totalCount = useAppSelector(selectTotalCount);
+  const products = useProductsStore((state) => state.items);
+  const hasNextPage = useProductsStore((state) => state.hasNextPage);
+  const isLoading = useProductsStore((state) => state.isLoading);
+  // const filter = selectFilter();
+
+
+  // const isLogin = useAuthStore(selectIsLogin);
+  // const totalCount = useProductsStore(selectTotalCount);
+
+  //zustand 무한루프 시 참고
+  const { minPrice, maxPrice, title, categoryId } = useFilterStore();
+  const filter = useMemo(
+    () => ({ categoryId, minPrice, maxPrice, title }),
+    [categoryId, minPrice, maxPrice, title]
+  );
 
   const loadProductsData = async (isInitial = false) => {
     try {
       const page = isInitial ? 1 : currentPage + 1;
-      await dispatch(
-        loadProducts({
-          filter,
-          pageSize,
-          page,
-          isInitial,
-        })
-      ).unwrap();
+      await useLoadProducts({
+        filter,
+        pageSize,
+        page,
+        isInitial,
+      });
       if (!isInitial) {
         setCurrentPage(page);
       }
@@ -76,7 +90,7 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
   const handleCartAction = (product) => {
     if (isLogin && user) {
       const cartItem = { ...product, count: 1 };
-      dispatch(addCartItem({ item: cartItem, userId: user.uid, count: 1 }));
+      addCartItem({ item: cartItem, userId: user.uid, count: 1 });
       console.log(`${product.title} 상품이 \n장바구니에 담겼습니다.`);
     } else {
       navigate(pageRoutes.login);
@@ -86,7 +100,7 @@ export const ProductList = ({ pageSize = PRODUCT_PAGE_SIZE }) => {
   const handlePurchaseAction = (product) => {
     if (isLogin && user) {
       const cartItem = { ...product, count: 1 };
-      dispatch(addCartItem({ item: cartItem, userId: user.uid, count: 1 }));
+      addCartItem({ item: cartItem, userId: user.uid, count: 1 });
       navigate(pageRoutes.cart);
     } else {
       navigate(pageRoutes.login);

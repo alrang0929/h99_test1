@@ -9,7 +9,6 @@ export const useFilterStore = create((set) => ({
   categoryId: ALL_CATEGORY_ID,
 
   // 상태 업데이트 함수
-  selectFilter:()=>set({}),
   setMinPrice: (minPrice) => set({ minPrice }),
   setMaxPrice: (maxPrice) => set({ maxPrice }),
   setTitle: (title) => set({ title }),
@@ -22,3 +21,17 @@ export const useFilterStore = create((set) => ({
       categoryId: ALL_CATEGORY_ID,
     }),
 }));
+
+// filterSelectors.js에서 사용하는 선택자 함수들
+export const selectMinPrice = () => useFilterStore((state) => state.minPrice);
+export const selectMaxPrice = () => useFilterStore((state) => state.maxPrice);
+export const selectTitle = () => useFilterStore((state) => state.title);
+export const selectCategoryId = () => useFilterStore((state) => state.categoryId);
+
+export const selectFilter = () =>
+  useFilterStore((state) => ({
+    minPrice: state.minPrice,
+    maxPrice: state.maxPrice,
+    title: state.title,
+    categoryId: state.categoryId,
+  }));
