@@ -5,11 +5,14 @@ import React from 'react';
 
 import { PaymentMethodTableRow } from '@/pages/purchase/components/PaymentMethodTableRow';
 import { selectTotalPrice } from '@/store/cart/cartSelectors';
-import { useAppSelector } from '@/store/hooks';
+// import { useAppSelector } from '@/store/hooks';
 import { formatPrice } from '@/utils/formatter';
+import { useCartStore } from '../../../store/cart/cartStore';
 
 export const Payment = ({ paymentMethod, onPaymentMethodChange }) => {
-  const totalPrice = useAppSelector(selectTotalPrice);
+
+  const{totalPrice} = useCartStore();
+
   const shippingCost = 3000;
 
   const getTotalPrice = () => {

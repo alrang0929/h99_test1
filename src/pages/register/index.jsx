@@ -8,16 +8,16 @@ import { useNavigate } from 'react-router-dom';
 import { pageRoutes } from '@/apiRoutes';
 import { EMAIL_PATTERN } from '@/constants';
 import { Layout, authStatusType } from '@/pages/common/components/Layout';
-import { registerUser } from '@/store/auth/authActions';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useAuthStore } from '@/store/auth/authStore';
+import { useRegisterUser } from '@/store/auth/authActions';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const { registerStatus, registerError } = useAppSelector(
-    (state) => state.auth
-  );
 
+  const { mutate, isLoading } = useRegisterUser();
+  const registerStatus = useAuthStore((state) => state.registerStatus); // Zustand 상태
+  const setRegisterStatus = useAuthStore((state) => state.setRegisterStatus); // Zustand 상태 업데이트
+  const registerError = useAuthStore((state) => state.registerError); // Zustand 상태
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,22 +42,25 @@ export const RegisterPage = () => {
     return Object.keys(formErrors).length === 0;
   };
 
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      try {
-        await dispatch(registerUser({ email, password, name })).unwrap();
-        console.log('가입 성공!');
-        navigate(pageRoutes.login);
-      } catch (error) {
-        console.error(
-          '회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.',
-          error
-        );
-      }
+      setRegisterStatus('loading'); // 로딩 상태 설정
+      mutate(
+        { email, password, name },
+        {
+          onSuccess: () => {
+            console.log('가입 성공!');
+            navigate(pageRoutes.login);
+          },
+          onError: (error) => {
+            console.error('회원가입 중 오류가 발생했습니다.', error);
+          },
+        }
+      );
     }
   };
-
+  
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     switch (id) {
